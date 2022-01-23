@@ -21,26 +21,34 @@
 ;;; MySQL database specs for local and OpenShift
 
 (def dbspec
-  (if-let [host (System/getenv "MYSQL_SERVICE_HOST")]
-    {:connection-uri
-     (str 
-      "jdbc:mysql://"
-      host ":"
-      (System/getenv "MYSQL_SERVICE_PORT") "/"
-      (System/getenv "SLCAL_SQLDB")
-      "?user=" (System/getenv "SLCAL_SQLUSR")
-      "&password=" (System/getenv "SLCAL_SQLPWD")
-      "&useSSL=false")
-     }
-    {:dbtype "mysql"
-     :dbname (System/getenv "SLCAL_SQLDB")
-     :subname (str
-               "//localhost:3306/"
-               (System/getenv "SLCAL_SQLDB"))
-     :user (System/getenv "SLCAL_SQLUSR")
-     :password (System/getenv "SLCAL_SQLPWD")
-     }
-  ))
+  (case (System/getenv "RSVDB")
+    "openshift" {:connection-uri
+                 (str 
+                  "jdbc:mysql://"
+                  (System/getenv "MYSQL_SERVICE_HOST") ":"
+                  (System/getenv "MYSQL_SERVICE_PORT") "/"
+                  (System/getenv "SLCAL_SQLDB")
+                  "?user=" (System/getenv "SLCAL_SQLUSR")
+                  "&password=" (System/getenv "SLCAL_SQLPWD")
+                  "&useSSL=false")
+                 }
+    "crunchy" {:dbtype "postgresql"
+               :dbname (System/getenv "PGDB")
+               :host (System/getenv "PGHOST")
+               :user (System/getenv "PGUSER")
+               :password (System/getenv "PGPASSWORD")
+               :ssl true
+               :sslmode "require"
+               }
+    "local" {:dbtype "mysql"
+             :dbname (System/getenv "SLCAL_SQLDB")
+             :subname (str
+                       "//localhost:3306/"
+                       (System/getenv "SLCAL_SQLDB"))
+             :user (System/getenv "SLCAL_SQLUSR")
+             :password (System/getenv "SLCAL_SQLPWD")
+             }
+    ))
 
 ;;; parameters related to reservation server
 

@@ -19,10 +19,10 @@ echo "" >> $TMPFILE
 
 echo "----> `date \"+%H:%M:%S\"` Starting mysrsv" &>> $TMPFILE
 
-nohup java -jar $HOME/app-standalone.jar &>> $TMPFILE
+nohup ${HOME}/jdk-17/bin/java -jar $HOME/app-standalone.jar &>> $TMPFILE
 
 echo "----> `date \"+%H:%M:%S\"` Finished mysrsv" &>> $TMPFILE
 
-cat $TMPFILE | ssmtp $RSV_TO
+#cat $TMPFILE | ssmtp $RSV_TO
 
-#while true; do sleep 2; done
+while true; do sleep 2; done
