@@ -1,4 +1,4 @@
-(defproject mysrsv "0.3.0"
+(defproject sailrsv "0.4.0"
   :description "Sailboat reservation screenscraper & reservation writer"
   :url "http://piech.io"
   :license {:name "Eclipse Public License"
@@ -6,6 +6,8 @@
   :dependencies 
   [;http://clojure.org/downloads
    [org.clojure/clojure "1.10.0"]
+   ;https://github.com/nrepl/nrepl
+   [nrepl "0.9.0"]
    ;https://github.com/clj-time/clj-time
    [clj-time "0.15.2"]
    ;https://github.com/cgrand/enlive

@@ -1,12 +1,14 @@
 (ns sailrsv.core
-  (:require [clj-time.core :as time])
-  (:require [clj-time.format :as ftime])
-  (:require [clj-time.coerce :as ctime])
-  (:require [clojure.java.jdbc :as jdbc])
-  (:require [net.cgrand.enlive-html :as enlive])
+  (:require 
+   [nrepl.server :as nrepl]
+   [clj-time.core :as time]
+   [clj-time.format :as ftime]
+   [clj-time.coerce :as ctime]
+   [clojure.java.jdbc :as jdbc]
+   [net.cgrand.enlive-html :as enlive])
   (:import [java.net 
-            URL])
-  (:import [java.io
+            URL]
+           [java.io
             DataOutputStream])
   (:gen-class)
   )
@@ -285,6 +287,10 @@
   (jdbc/insert! dbspec :bareboat
                 {:date "2016-04-08"})
   )
+
+;; start nREPL server
+
+(defonce server (nrepl/start-server :port 7888))
 
 (defn -main
   "Sailboat reservation screenscraper & reservation writer"
