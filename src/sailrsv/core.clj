@@ -290,7 +290,7 @@
 
 ;; start nREPL server
 
-(defonce server (nrepl/start-server :port 7888))
+;(defonce server (nrepl/start-server :port 7888))
 
 (defn -main
   "Sailboat reservation screenscraper & reservation writer"
@@ -298,5 +298,5 @@
   (let [start 1
         numdays lookahead-days]
     (db-write-rsvs start numdays)
-;    (while true nil)
+    (while true nil)
     ))
