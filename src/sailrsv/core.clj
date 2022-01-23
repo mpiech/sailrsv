@@ -115,6 +115,34 @@
         (.close)))
     (slurp (.getInputStream connection))))
 
+; debugging test function
+
+(defn scrape-day [daysout]
+  (let [format-mo (ftime/formatter-local "MMM")
+        cur-dtobj (cur-dtobj)
+        cur-yr (time/year cur-dtobj)
+        cur-mo (ftime/unparse format-mo cur-dtobj)
+        cur-dy (time/day cur-dtobj)
+        check-dtstr (dtobj-to-dtstr cur-dtobj)
+        fr-dtobj (time/plus cur-dtobj
+                            (time/days daysout))
+        fr-yr (time/year fr-dtobj)
+        fr-mo (ftime/unparse format-mo fr-dtobj)
+        fr-dy (time/day fr-dtobj)
+        fr-tm (if (= daysout 0) "14:00" "09:00")
+        fr-dtstr (dtobj-to-dtstr fr-dtobj)
+        to-dtobj (time/plus fr-dtobj (time/days 1))
+        to-yr (time/year to-dtobj)
+        to-mo (ftime/unparse format-mo to-dtobj)
+        to-dy (time/day to-dtobj)
+        rsv-params (build-rsv-params
+                    cur-yr cur-mo cur-dy
+                    fr-yr fr-mo fr-dy fr-tm
+                    to-yr to-mo to-dy)
+        ]
+    (http-scrape rsv-url rsv-params)
+    ))
+
 ;;;
 ;;; Scrape functions
 ;;;
@@ -278,7 +306,7 @@
             (db-cancel-rsv cur-dtobj fr-dtobj)))))))
 
 ;;;
-;;; for REPL
+;;; debugging examples for REPL
 ;;;
 
 (comment
@@ -288,15 +316,14 @@
                 {:date "2016-04-08"})
   )
 
-;; start nREPL server
-
-;(defonce server (nrepl/start-server :port 7888))
-
 (defn -main
   "Sailboat reservation screenscraper & reservation writer"
   [& args]
+  ; uncomment nrepl line below to debug with nrepl
+  ; (defonce server (nrepl/start-server :port 7888))
   (let [start 1
         numdays lookahead-days]
     (db-write-rsvs start numdays)
-    (while true nil)
+    ; uncomment infinite loop below to jack in with nREPL and debug
+    ; (while true nil)
     ))

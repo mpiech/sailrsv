@@ -9,7 +9,7 @@ export NSS_WRAPPER_GROUP=/etc/group
 
 echo "hostname=$HOSTNAME" >> /etc/ssmtp/ssmtp.conf
 
-TMPDATE=`date "+%d"`
+TMPDATE=`date "+%m.%d"`
 TMPFILE=/tmp/myscallog.$TMPDATE
 
 echo "To: $RSV_TO" > $TMPFILE
@@ -23,6 +23,7 @@ nohup ${HOME}/jdk-17/bin/java -jar $HOME/app-standalone.jar &>> $TMPFILE
 
 echo "----> `date \"+%H:%M:%S\"` Finished mysrsv" &>> $TMPFILE
 
-#cat $TMPFILE | ssmtp $RSV_TO
+cat $TMPFILE | ssmtp $RSV_TO
 
-while true; do sleep 2; done
+# uncomment below when running as app rather than cronjob to debug
+# while true; do sleep 2; done
