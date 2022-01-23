@@ -1,0 +1,13 @@
+/buildenv.cfg
+/buildenv.cfg~
+/runenv.cfg
+/runenv.cfg~
+/target
+/classes
+/checkouts
+pom.xml
+pom.xml.asc
+*.jar
+*.class
+/.lein-*
+/.nrepl-port
