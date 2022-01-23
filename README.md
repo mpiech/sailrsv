@@ -21,6 +21,29 @@ oc new-app sailrsv --env-file=env.cfg
 oc create cronjob sailrsv \
 --image=image-registry.openshift-image-registry.svc:5000/myproj/sailrsv \
 --schedule='05 08 * * *' --restart=Never
+
+############################################################
+# env.cfg should specify the following environment variables
+
+RSVDB=
+SLCAL_SQLUSR=
+SLCAL_SQLPWD=
+SLCAL_SQLDB=
+PGHOST=
+PGUSER=
+PGPASSWORD=
+PGDB=
+RSV_URL=
+RSV_STATIC_PARAMS=
+RSV_SCRAPE_STRING=
+RSV_TO=
+RSV_FROM=
+RSV_SUBJECT=
+SSMTP_ROOT=
+SSMTP_MAILHUB=
+SSMTP_AUTHUSER=
+SSMTP_AUTHPASS=
+
 ```
 
 ## License
