@@ -5,11 +5,10 @@
    [clj-time.format :as ftime]
    [clj-time.coerce :as ctime]
    [clojure.java.jdbc :as jdbc]
-   [net.cgrand.enlive-html :as enlive])
-  (:import [java.net 
-            URL]
-           [java.io
-            DataOutputStream])
+   [net.cgrand.enlive-html :as enlive]
+   )
+  (:import [java.net URL]
+           [java.io DataOutputStream])
   (:gen-class)
   )
 
@@ -17,7 +16,7 @@
 ;;; Static parameters
 ;;;
 
-(def timezone "America/Los_Angeles")
+(def loc-timezone "America/Los_Angeles")
 (def lookahead-days 5)
 
 ;;; MySQL database specs for local and OpenShift
@@ -115,6 +114,64 @@
         (.close)))
     (slurp (.getInputStream connection))))
 
+;;;
+;;; Scrape functions
+;;;
+
+;;; to determine if boat is reserved on a specific date
+;;; post to reservations URL with constructed param string and
+;;; then look for scrape-string in HTML snippet parsed
+;;; out using Enlive
+
+(defn rsv-scrape-reserved? [rsv-params]
+  (neg? (.indexOf
+         (map enlive/text
+              (enlive/select
+               (http-scrape rsv-url rsv-params)
+               [:td.yctablecell]))
+         scrape-string)))
+
+;;;
+;;; Date/Time utilities
+;;;
+
+(defn cur-dtobj []
+  (time/to-time-zone
+   (time/now)
+   (time/time-zone-for-id loc-timezone)))
+
+(defn sqldtobj-to-dtobj [sqldtobj]
+  (time/to-time-zone
+   (ctime/from-sql-time sqldtobj)
+   (time/time-zone-for-id loc-timezone)))
+
+; unused
+(defn sqldtobj-to-datestr [sqldtobj]
+  (ftime/unparse
+   (ftime/with-zone
+     (ftime/formatters :date)
+     (time/time-zone-for-id loc-timezone))
+   (ctime/from-sql-time sqldtobj)))
+
+(defn dtobj-to-dtstr [dtobj]
+  (ftime/unparse
+   (ftime/with-zone
+     (ftime/formatters :date-hour-minute-second)
+     (time/time-zone-for-id loc-timezone))
+   dtobj))
+  
+(defn dtobj-to-datestr [dtobj]
+  (ftime/unparse
+   (ftime/with-zone
+     (ftime/formatters :date)
+     (time/time-zone-for-id loc-timezone))
+   dtobj))
+
+(defn dtobjs-to-datestrs [dtobjs]
+  (map (fn [x]
+         (dtobj-to-datestr x))
+       dtobjs))
+
 ; debugging test function
 
 (defn scrape-day [daysout]
@@ -142,64 +199,6 @@
         ]
     (http-scrape rsv-url rsv-params)
     ))
-
-;;;
-;;; Scrape functions
-;;;
-
-;;; to determine if boat is reserved on a specific date
-;;; post to reservations URL with constructed param string and
-;;; then look for scrape-string in HTML snippet parsed
-;;; out using Enlive
-
-(defn rsv-scrape-reserved? [rsv-params]
-  (neg? (.indexOf
-         (map enlive/text
-              (enlive/select
-               (http-scrape rsv-url rsv-params)
-               [:td.yctablecell]))
-         scrape-string)))
-
-;;;
-;;; Date/Time utilities
-;;;
-
-(defn cur-dtobj []
-  (time/to-time-zone
-   (time/now)
-   (time/time-zone-for-id timezone)))
-
-(defn sqldtobj-to-dtobj [sqldtobj]
-  (time/to-time-zone
-   (ctime/from-sql-time sqldtobj)
-   (time/time-zone-for-id timezone)))
-
-; unused
-(defn sqldtobj-to-datestr [sqldtobj]
-  (ftime/unparse
-   (ftime/with-zone
-     (ftime/formatters :date)
-     (time/time-zone-for-id timezone))
-   (ctime/from-sql-time sqldtobj)))
-
-(defn dtobj-to-dtstr [dtobj]
-  (ftime/unparse
-   (ftime/with-zone
-     (ftime/formatters :date-hour-minute-second)
-     (time/time-zone-for-id timezone))
-   dtobj))
-  
-(defn dtobj-to-datestr [dtobj]
-  (ftime/unparse
-   (ftime/with-zone
-     (ftime/formatters :date)
-     (time/time-zone-for-id timezone))
-   dtobj))
-
-(defn dtobjs-to-datestrs [dtobjs]
-  (map (fn [x]
-         (dtobj-to-datestr x))
-       dtobjs))
 
 ;;;
 ;;; Database functions
@@ -327,3 +326,5 @@
     ; uncomment infinite loop below to jack in with nREPL and debug
     ; (while true nil)
     ))
+
+;;; EOF

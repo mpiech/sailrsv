@@ -1,36 +1,30 @@
-# mysrsv
+# sailrsv
 
-FIXME: description
+Screen scrapes a reservation website to determine whether e.g. a sailboat is reserved on a particular day or set of days; updates reserved dates to a SQL database. Set up to run nightly as cronjob and email changes. Designed for use with sailcal. 
 
-## Installation
+```
+git clone https://github.com/mpiech/sailrsv
+cd sailrsv
 
-Download from http://example.com/FIXME.
+oc project myproj
+oc import-image mpiech/s2i-clojure-mail --confirm
+# first time build
+oc new-build mpiech/s2i-clojure-mail~. --name=sailrsv --env-file=env.cfg
+# subsequent rebuilds
+oc start-build sailrsv --from-dir=. --follow
 
-## Usage
+# for testing/debugging
+# uncomment while's in run.sh and core.lj
+oc new-app sailrsv --env-file=env.cfg
 
-FIXME: explanation
-
-    $ java -jar mysrsv-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+# for cronjob
+oc create cronjob sailrsv \
+--image=image-registry.openshift-image-registry.svc:5000/myproj/sailrsv \
+--schedule='05 08 * * *' --restart=Never
+```
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014-2022
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the Eclipse Public License either version 1.0 or later.

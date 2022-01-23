@@ -17,11 +17,11 @@ echo "From: $RSV_FROM" >> $TMPFILE
 echo "Subject: $RSV_SUBJECT $TMPDATE" >> $TMPFILE
 echo "" >> $TMPFILE
 
-echo "----> `date \"+%H:%M:%S\"` Starting mysrsv" &>> $TMPFILE
+echo "----> `date \"+%H:%M:%S\"` Starting sailrsv" &>> $TMPFILE
 
 nohup ${HOME}/jdk-17/bin/java -jar $HOME/app-standalone.jar &>> $TMPFILE
 
-echo "----> `date \"+%H:%M:%S\"` Finished mysrsv" &>> $TMPFILE
+echo "----> `date \"+%H:%M:%S\"` Finished sailrsv" &>> $TMPFILE
 
 cat $TMPFILE | ssmtp $RSV_TO
 

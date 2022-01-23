@@ -1,7 +1,4 @@
-/buildenv.cfg
-/buildenv.cfg~
-/runenv.cfg
-/runenv.cfg~
+/env.cfg
 /target
 /classes
 /checkouts
