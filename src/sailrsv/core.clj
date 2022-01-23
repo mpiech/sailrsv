@@ -297,6 +297,6 @@
   [& args]
   (let [start 1
         numdays lookahead-days]
-;    (db-write-rsvs start numdays)
-    (while true nil)
+    (db-write-rsvs start numdays)
+;    (while true nil)
     ))
