@@ -1,6 +1,6 @@
 # sailrsv
 
-Screen scrapes a reservation website to determine whether e.g. a sailboat is reserved on a particular day or set of days; updates reserved dates to a SQL database. Set up to run nightly as cronjob and email changes. Designed for use with sailcal. 
+Gets sailboat reservation data for sailcal. Screen scrapes a reservation website to determine whether e.g. a sailboat is reserved on a particular day or set of days. Puts reservation data in a SQL database. Set up to run nightly as cronjob that updates database and emails changes. Designed for use with sailcal. 
 
 ```
 git clone https://github.com/mpiech/sailrsv
@@ -26,13 +26,13 @@ oc create cronjob sailrsv \
 # env.cfg should specify the following environment variables
 
 RSVDB=
-SLCAL_SQLUSR=
-SLCAL_SQLPWD=
-SLCAL_SQLDB=
 PGHOST=
 PGUSER=
 PGPASSWORD=
 PGDB=
+SLCAL_SQLUSR=
+SLCAL_SQLPWD=
+SLCAL_SQLDB=
 RSV_URL=
 RSV_STATIC_PARAMS=
 RSV_SCRAPE_STRING=
