@@ -7,7 +7,7 @@ git clone https://github.com/mpiech/sailrsv
 cd sailrsv
 
 oc project myproj
-oc import-image mpiech/s2i-clojure-mail --confirm
+oc import-image mpiech/s2i-clojure-mail --confirm # from Docker Hub
 # first time build
 oc new-build mpiech/s2i-clojure-mail~. --name=sailrsv --env-file=env.cfg
 # subsequent rebuilds
