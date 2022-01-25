@@ -19,10 +19,17 @@
 (def loc-timezone "America/Los_Angeles")
 (def lookahead-days 5)
 
-;;; MySQL database specs for local and OpenShift
+;;;
+;;; SQL database of reservations
+;;;
+
+;;; MySQL database specs for OpenShift, Crunchy Bridge, or local
+
+(def rsvdb (System/getenv "RSVDB"))
+(def rsvdbtype (if (= rsvdb "crunchy") "postgresql" "mysql"))
 
 (def dbspec
-  (case (System/getenv "RSVDB")
+  (case rsvdb
     "openshift" {:connection-uri
                  (str 
                   "jdbc:mysql://"
@@ -33,7 +40,7 @@
                   "&password=" (System/getenv "SLCAL_SQLPWD")
                   "&useSSL=false")
                  }
-    "crunchy" {:dbtype "postgresql"
+    "crunchy" {:dbtype rsvdbtype
                :dbname (System/getenv "PGDB")
                :host (System/getenv "PGHOST")
                :user (System/getenv "PGUSER")
@@ -41,7 +48,7 @@
                :ssl true
                :sslmode "require"
                }
-    "local" {:dbtype "mysql"
+    "local" {:dbtype rsvdbtype
              :dbname (System/getenv "SLCAL_SQLDB")
              :subname (str
                        "//localhost:3306/"
@@ -135,7 +142,7 @@
 ;;; Date/Time utilities
 ;;;
 
-(defn cur-dtobj []
+(defn get-cur-dtobj []
   (time/to-time-zone
    (time/now)
    (time/time-zone-for-id loc-timezone)))
@@ -176,7 +183,7 @@
 
 (defn scrape-day [daysout]
   (let [format-mo (ftime/formatter-local "MMM")
-        cur-dtobj (cur-dtobj)
+        cur-dtobj (get-cur-dtobj)
         cur-yr (time/year cur-dtobj)
         cur-mo (ftime/unparse format-mo cur-dtobj)
         cur-dy (time/day cur-dtobj)
@@ -229,7 +236,7 @@
     (println "Adding " check-dtstr " " res-dtstr)
     (jdbc/insert! dbspec :reservations
                   {:check_date check-dtstr
-                   :date res-dtstr})))
+                   :res_date res-dtstr})))
 
 (defn db-cancel-rsv [check-dtobj res-dtobj]
   (let [check-dtstr 
@@ -249,18 +256,25 @@
                   ["DATE(date)=?" res-datestr])
     (jdbc/insert! dbspec :cancellations
                   {:cancel_date check-dtstr
-                   :date res-datestr})))
+                   :res_date res-datestr})))
 
 (defn db-read-dtobjs [table start-dtstr]
-  (map (fn [x]
-         (sqldtobj-to-dtobj (:date x)))
-       (jdbc/query dbspec
-                   [(str
-                     "SELECT DISTINCT date "
-                     "FROM " table
-                     " WHERE date >= \""
-                     start-dtstr
-                     "\"")])))
+  (let [qstr (if (= rsvdbtype "mysql")
+               (str
+                "SELECT DISTINCT res_date "
+                "FROM " table
+                " WHERE res_date >= \""
+                start-dtstr
+                "\"")
+               (str
+                "SELECT DISTINCT res_date "
+                "FROM " table
+                " WHERE CAST (res_date AS TIMESTAMP) >= "
+                "CAST ('" start-dtstr "' AS TIMESTAMP)"))]
+    (map (fn [x]
+           (sqldtobj-to-dtobj (:res_date x)))
+         (jdbc/query dbspec [qstr]))
+    ))
 
 (defn reserved? [test-dtobj prev-rsvs-dtobjs]
   (let [test-datestr (dtobj-to-datestr test-dtobj)]
@@ -272,7 +286,7 @@
 
 (defn db-write-rsvs [start numdays]
   (let [format-mo (ftime/formatter-local "MMM")
-        cur-dtobj (cur-dtobj)
+        cur-dtobj (get-cur-dtobj)
         cur-yr (time/year cur-dtobj)
         cur-mo (ftime/unparse format-mo cur-dtobj)
         cur-dy (time/day cur-dtobj)
@@ -312,19 +326,19 @@
   (jdbc/query dbspec
               ["select * from reservations"])
   (jdbc/insert! dbspec :bareboat
-                {:date "2016-04-08"})
+                {:res_date "2016-04-08"})
   )
 
 (defn -main
   "Sailboat reservation screenscraper & reservation writer"
   [& args]
   ; uncomment nrepl line below to debug with nrepl
-  ; (defonce server (nrepl/start-server :port 7888))
+  (defonce server (nrepl/start-server :port 7888))
   (let [start 1
         numdays lookahead-days]
-    (db-write-rsvs start numdays)
+    ;(db-write-rsvs start numdays)
     ; uncomment infinite loop below to jack in with nREPL and debug
-    ; (while true nil)
+    (while true nil)
     ))
 
 ;;; EOF
