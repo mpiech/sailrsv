@@ -17,6 +17,8 @@ echo "From: $RSV_FROM" >> $TMPFILE
 echo "Subject: $RSV_SUBJECT $TMPDATE" >> $TMPFILE
 echo "" >> $TMPFILE
 
+echo "Reservations database type = $RSVDB" >> $TMPFILE
+echo "" >> $TMPFILE
 echo "----> `date \"+%H:%M:%S\"` Starting sailrsv" &>> $TMPFILE
 
 nohup ${HOME}/jdk-17/bin/java -jar $HOME/app-standalone.jar &>> $TMPFILE
@@ -26,4 +28,4 @@ echo "----> `date \"+%H:%M:%S\"` Finished sailrsv" &>> $TMPFILE
 cat $TMPFILE | ssmtp $RSV_TO
 
 # uncomment below when running as app rather than cronjob to debug
-while true; do sleep 2; done
+#while true; do sleep 2; done
