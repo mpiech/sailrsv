@@ -19,6 +19,7 @@ echo "" >> $TMPFILE
 
 echo "Reservations database type = $RSVDB" >> $TMPFILE
 echo "" >> $TMPFILE
+
 echo "----> `date \"+%H:%M:%S\"` Starting sailrsv" &>> $TMPFILE
 
 nohup ${HOME}/jdk-17/bin/java -jar $HOME/app-standalone.jar &>> $TMPFILE
