@@ -259,7 +259,7 @@
          res-dtobj)]
     (println "Canceling " res-datestr)
     (jdbc/delete! dbspec :reservations
-                  ["DATE(date)=?" res-datestr])
+                  ["DATE(res_date)=?" res-datestr])
     (jdbc/insert! dbspec :cancellations
                   {:cancel_date check-dtstr
                    :res_date res-datestr})))
