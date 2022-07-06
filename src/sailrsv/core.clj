@@ -24,7 +24,13 @@
 ;;;
 
 (def rsvdb (System/getenv "RSVDB"))
-(def rsvdbtype (if (= rsvdb "crunchy") "postgresql" "mysql"))
+;(def rsvdbtype (if (= rsvdb "crunchy") "postgresql" "mysql"))
+(def rsvdbtype
+  (case rsvdb
+    "openshift" "mysql"
+    "crunchy" "postgresql"
+    "cockroach" "postgresql"
+    "local" "mysql"))
 
 (def dbspec
   (case rsvdb
@@ -48,11 +54,14 @@
                }
     "cockroach" {:connection-uri
                  (str 
-                  "postgresql://"
+                  "jdbc:postgresql://"
                   (System/getenv "COCKROACH_HOST") ":"
                   (System/getenv "COCKROACH_PORT") "/"
-                  (System/getenv "SLCAL_SQLDB")
-                  (System/getenv "COCKROACH_OPTIONS"))
+                  (System/getenv "SLCAL_SQLDB") "?"
+                  "?user=" (System/getenv "COCKROACH_USR")
+                  "&password=" (System/getenv "COCKROACH_PWD")
+                  "&options=" (System/getenv "COCKROACH_OPTIONS")
+                  )
                  }
     "local" {:dbtype rsvdbtype
              :dbname (System/getenv "SLCAL_SQLDB")

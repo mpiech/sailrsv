@@ -17,7 +17,8 @@
    ;http://dev.mysql.com/downloads/connector/j/
    [mysql/mysql-connector-java "8.0.28"]
    ;https://github.com/remodoy/clj-postgresql
-   [org.postgresql/postgresql "42.3.1"]
+   ;[org.postgresql/postgresql "42.3.1"]
+   [org.postgresql/postgresql "42.4.0"]
    ]
   :main sailrsv.core
   :aot [sailrsv.core]
