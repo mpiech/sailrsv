@@ -267,7 +267,7 @@
                     ["DATE(res_date)=?" res-datestr])
       (jdbc/delete! dbspec :reservations
                     [(str "res_date=? CAST (" res-datestr
-                          " AS TIMESTAMP")]))
+                          " AS TIMESTAMP)")]))
     (jdbc/insert! dbspec :cancellations
                   {:cancel_date check-dtstr
                    :res_date res-datestr})))
