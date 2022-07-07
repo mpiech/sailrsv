@@ -343,12 +343,12 @@
   "Sailboat reservation screenscraper & reservation writer"
   [& args]
   ; uncomment nrepl line below to debug with nrepl
-  ;(defonce server (nrepl/start-server :port 7888))
+  (defonce server (nrepl/start-server :port 7888))
   (let [start 1
         numdays lookahead-days]
     (db-write-rsvs start numdays)
     ; uncomment infinite loop below to jack in with nREPL and debug
-    ;(while true nil)
+    (while true nil)
     ))
 
 ;;; EOF
