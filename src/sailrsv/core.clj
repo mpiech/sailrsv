@@ -24,13 +24,7 @@
 ;;;
 
 (def rsvdb (System/getenv "RSVDB"))
-;(def rsvdbtype (if (= rsvdb "crunchy") "postgresql" "mysql"))
-(def rsvdbtype
-  (case rsvdb
-    "openshift" "mysql"
-    "crunchy" "postgresql"
-    "cockroach" "postgresql"
-    "local" "mysql"))
+(def rsvdbtype (System/getenv "RSVDBTYPE"))
 
 (def dbspec
   (case rsvdb
@@ -42,7 +36,8 @@
                   (System/getenv "SLCAL_SQLDB")
                   "?user=" (System/getenv "SLCAL_SQLUSR")
                   "&password=" (System/getenv "SLCAL_SQLPWD")
-                  "&useSSL=false")
+                  "&useSSL=false"
+                  )
                  }
     "crunchy" {:dbtype rsvdbtype
                :dbname (System/getenv "SLCAL_SQLDB")
