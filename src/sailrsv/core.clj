@@ -262,8 +262,11 @@
            (time/default-time-zone))
          res-dtobj)]
     (println "Canceling " res-datestr)
-    (jdbc/delete! dbspec :reservations
-                  ["DATE(res_date)=?" res-datestr])
+    (if (= rsvdbtype "mysql")
+      (jdbc/delete! dbspec :reservations
+                    ["DATE(res_date)=?" res-datestr])
+      (jdbc/delete! dbspec :reservations
+                    ["res_date=?" res-datestr]))
     (jdbc/insert! dbspec :cancellations
                   {:cancel_date check-dtstr
                    :res_date res-datestr})))
