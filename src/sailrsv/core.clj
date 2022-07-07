@@ -52,7 +52,7 @@
                   "jdbc:postgresql://"
                   (System/getenv "COCKROACH_HOST") ":"
                   (System/getenv "COCKROACH_PORT") "/"
-                  (System/getenv "SLCAL_SQLDB") "?"
+                  (System/getenv "SLCAL_SQLDB")
                   "?user=" (System/getenv "COCKROACH_USR")
                   "&password=" (System/getenv "COCKROACH_PWD")
                   "&options=" (System/getenv "COCKROACH_OPTIONS")
@@ -343,12 +343,12 @@
   "Sailboat reservation screenscraper & reservation writer"
   [& args]
   ; uncomment nrepl line below to debug with nrepl
-  (defonce server (nrepl/start-server :port 7888))
+  ;(defonce server (nrepl/start-server :port 7888))
   (let [start 1
         numdays lookahead-days]
     (db-write-rsvs start numdays)
     ; uncomment infinite loop below to jack in with nREPL and debug
-    (while true nil)
+    ;(while true nil)
     ))
 
 ;;; EOF
