@@ -266,7 +266,8 @@
       (jdbc/delete! dbspec :reservations
                     ["DATE(res_date)=?" res-datestr])
       (jdbc/delete! dbspec :reservations
-                    ["date_trunc('day',res_date)=?" res-datestr])
+                    ["date_trunc('day',res_date)= CAST (? AS TIMESTAMP)"
+                     res-datestr])
 ;      (jdbc/execute! dbspec
 ;                     [(str
 ;                       "DELETE FROM reservations WHERE res_date ="
